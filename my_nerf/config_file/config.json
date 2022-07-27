@@ -1,0 +1,23 @@
+{
+  "net_hyperparams": {
+    "Zs_blocks": 3,
+    "Zt_blocks": 1,
+    "dim": 256,
+    "xyz_freq": 10,
+    "dir_freq": 4,
+    "latent_dim": 256
+  },
+  "data": {
+    "splits": "cars_train",
+    "data_dir": "/home/zhuzhengming/NeRF-GAN/code-nerf/dataset"
+  },
+  "N_samples": 96,
+  "near": 0.8,
+  "far": 1.8,
+  "loss_reg_coef": 1e-4,
+  "lr_schedule": [
+    {"type":  "step", "lr":  1e-4, "interval":  250000},
+    {"type":  "step", "lr":  1e-3, "interval":  250000}
+  ],
+  "check_points": 1000
+}
