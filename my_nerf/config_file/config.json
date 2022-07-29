@@ -8,8 +8,9 @@
     "latent_dim": 256
   },
   "data": {
+    "cat" : "srn_cars",
     "splits": "cars_train",
-    "data_dir": "/home/zhuzhengming/NeRF-GAN/code-nerf/dataset"
+    "data_dir": "/home/zhuzhengming/NeRF-GAN/MY_NeRF/dataset/srn_cars"
   },
   "N_samples": 96,
   "near": 0.8,

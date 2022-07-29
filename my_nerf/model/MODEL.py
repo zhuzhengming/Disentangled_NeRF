@@ -20,7 +20,7 @@ class ConNeRF(nn.Module):
 
         # dimension: sin(nx) + cos(nx) + x
         d_xyz = 3 + 3 * self.xyz_freq + 3 * self.xyz_freq
-        d_dir = 3 + 6 * self.dir_freq + 3 * self.dir_freq
+        d_dir = 3 + 3 * self.dir_freq + 3 * self.dir_freq
 
         self.encoding_xyz = nn.Sequential(nn.Linear(d_xyz, dim), nn.ReLU())
 
@@ -53,9 +53,10 @@ class ConNeRF(nn.Module):
             z = getattr(self, f"shape_latent_layer_{i+1}")(Zs)
             y = y + z
             y = getattr(self, f"shape_layer_{i+1}")(y)
+        y = self.encoding_shape(y)
         sigma = self.sigma(y)
 
-        y = torch.cat([self.encoding_shape(y), dir], -1)
+        y = torch.cat([y, dir], -1)
         y = self.encoding_dir(y)
 
         for j in range(self.Zt_blocks):

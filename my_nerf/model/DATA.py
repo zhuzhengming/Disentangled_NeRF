@@ -34,11 +34,13 @@ def load_intrinsic(intrinsic_path):
     return focal, H, W
 
 class DATA_loader():
-    def __init__(self, data_dir = '../data/ShapeNet_SRN/srn_cars', splits='cars_trian', mode='train', crop = True):
+    def __init__(self, data_dir = '../data/ShapeNet_SRN/srn_cars',
+                 num_intances_per_obj = 1,
+                 splits='cars_trian', mode='train', crop = True):
         self.data_dir = os.path.join(data_dir, splits)
         self.ids = np.sort([f.name for f in os.scandir(self.data_dir)])
         self.lenids = len(self.ids)
-        self.num_instances_per_obj = 1
+        self.num_instances_per_obj = num_intances_per_obj
         self.mode = mode
         self.crop = crop
 
@@ -54,7 +56,7 @@ class DATA_loader():
 
         else:
             focal, H, W, imgs, poses = self.return_test_val_data(obj_id)
-            return focal, H, W, imgs, poses, poses,idx
+            return focal, H, W, imgs, poses, idx
 
 
     def return_train_data(self,obj_id):
@@ -64,7 +66,7 @@ class DATA_loader():
         intrinsic_path = os.path.join(self.data_dir, obj_id, 'intrinsics.txt')
 
         # data information load
-        instances = np.random.choice(250, self.num_instances_per_obj)   # get instances randomly in [0,250]
+        instances = np.random.choice(50, self.num_instances_per_obj)   # get instances randomly in [0,50]
 
         poses = load_poses(pose_dir,instances)
         imgs = load_imgs(img_dir,instances)
@@ -81,9 +83,6 @@ class DATA_loader():
         pose_dir = os.path.join(self.data_dir, obj_id, 'pose')
         img_dir = os.path.join(self.data_dir, obj_id, 'rgb')
         intrinsic_path = os.path.join(self.data_dir, obj_id, 'intrinsics.txt')
-
-        # data information load
-        instances = np.random.choice(250, self.num_instances_per_obj)  # get instances randomly in [0,250]
 
         instances = np.arange(250)  # get instances orderly
 
