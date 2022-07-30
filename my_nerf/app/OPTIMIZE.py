@@ -12,7 +12,7 @@ if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser(description="My_conNeRF")
     arg_parser.add_argument("--gpu",dest="gpu",default="0")
     arg_parser.add_argument("--saved_dir", dest="saved_dir", default="/home/zhuzhengming/NeRF-GAN/MY_NeRF/save_dir")
-    arg_parser.add_argument("--gt_instances", dest = "gt_instances", nargs='+', default={1,12})
+    arg_parser.add_argument("--gt_instances", dest = "gt_instances", nargs='+', default={1,17})
     arg_parser.add_argument("--splits", dest="splits", default='test')
     arg_parser.add_argument("--num_optimizes", dest="num_optimizes", default = 200)
     arg_parser.add_argument("--lr", dest="lr", default=1e-2)

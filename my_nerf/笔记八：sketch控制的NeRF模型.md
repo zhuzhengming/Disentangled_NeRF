@@ -50,12 +50,15 @@
 ## 对于已有训练出的模型：
 
 - camera pose的操作是设置azimuth、 elevation 和 distance来得到C2W转换矩阵来进行的。
+  - 实验验证猜想正确
 
 
 
 - latent code 的操作是：优化提取输入图形的latent code  然后保存下来再赋值给模型渲染，便可利用输入图像的latent code
 
+  - 
 
+  ​	
 
 ### 计划：
 
@@ -73,4 +76,8 @@
 
 - 训练速度慢
 
-  
+
+### 待办：
+
+- 写一个C2W的矩阵转换
+- 解偶、插值latent code来进行渲染
