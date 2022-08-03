@@ -31,27 +31,56 @@ class pose_renderer(object):
         self.batch_size = batch_size
         self.output_path = output_path
 
+        self.azimuth = 0.0
+        self.elevation = 0.3
+        self.distance = 1.2
+
         self.model = ConNeRF(**self.config['net_hyperparams']).to(self.device)
         self.genarate_codes()
-        self.poses = self.poses_loader()
+        self.poses = self.poses_loader(self.azimuth,self.elevation,self.distance)
         self.intrinsic_loader()
         self.load_trained_model(self.saved_dir)
         self.load_latent_code(self.latent_code_path)
 
 
 
-    def poses_loader(self):
-        #load all angle from dataset
-        poses_dir = "/home/zhuzhengming/NeRF-GAN/MY_NeRF/dataset/srn_cars/cars_train/173669aeeba92aaec4929b8bd41b8bc6/pose"
+    def poses_loader(self, azimuth, elevation, distance):
+        # load all angle from dataset
+        # poses_dir = "/home/zhuzhengming/NeRF-GAN/MY_NeRF/dataset/srn_cars/cars_train/173669aeeba92aaec4929b8bd41b8bc6/pose"
+        #
+        # txtfiles = np.sort([os.path.join(poses_dir, f.name) for f in os.scandir(poses_dir)])
+        # posefiles = np.array(txtfiles)
+        # srn_coords_trans = np.diag(np.array([1, -1, -1, 1]))
+        # poses = []
+        # for posefile in posefiles:
+        #     pose = np.loadtxt(posefile).reshape(4, 4)
+        #     poses.append(pose @ srn_coords_trans)
+        # return torch.from_numpy(np.array(poses)).float()
 
-        txtfiles = np.sort([os.path.join(poses_dir, f.name) for f in os.scandir(poses_dir)])
-        posefiles = np.array(txtfiles)
-        srn_coords_trans = np.diag(np.array([1, -1, -1, 1]))
         poses = []
-        for posefile in posefiles:
-            pose = np.loadtxt(posefile).reshape(4, 4)
-            poses.append(pose @ srn_coords_trans)
+        for i in range(100):
+            azimuth = i * (2*3.1415926)/100
+            # srn_coords_trans = np.diag(np.array([1, -1, -1, 1]))
+            T = self.C2W(azimuth,elevation,distance)
+            poses.append(T)
+
         return torch.from_numpy(np.array(poses)).float()
+
+
+
+    def C2W(self, azimuth, elevation, distance):
+        R = np.array([[-np.sin(azimuth), np.cos(azimuth), 0],
+                      [-np.sin(elevation) * np.cos(azimuth), -np.sin(elevation) * np.sin(azimuth), np.cos(elevation)],
+                      [np.cos(elevation) * np.cos(azimuth), np.cos(elevation) * np.sin(azimuth), np.sin(elevation)]])
+
+        p = np.array([distance * np.cos(elevation) * np.cos(azimuth),
+                      distance * np.cos(elevation) * np.sin(azimuth),
+                      distance * np.sin(elevation)])
+
+        T = np.c_[R.transpose(), p.transpose()]
+        T = np.r_[T, np.array([[0,0,0,1]])]
+
+        return T
 
     def intrinsic_loader(self):
         # load all angle from dataset
@@ -112,9 +141,9 @@ class pose_renderer(object):
     def poses_rendering(self):
         #don't calculate grad
         with torch.no_grad():
-            for pose_id in range(self.Zs_codes.shape[0]):
+            for pose_id in range(self.poses.shape[0]):
                 # generated_imgs = []
-                t_pose = self.poses[4]
+                t_pose = self.poses[pose_id]
                 # H, W = t_pose.shape[:2]
                 # print(self.H, self.W, self.focal)
                 rays_o, viewdir = get_rays(self.H, self.W, self.focal, t_pose)
@@ -126,8 +155,8 @@ class pose_renderer(object):
                 for i in range(0, xyz.shape[0], self.batch_size):
                     sigmas, rgbs = self.model(xyz[i:i + self.batch_size].to(self.device),
                                               viewdir[i:i + self.batch_size].to(self.device),
-                                              self.Zs_codes[pose_id],
-                                              self.Zt_codes[5]
+                                              self.Zs_codes[2],
+                                              self.Zt_codes[2]
                                               )
 
                     rbg_rays, _ = volume_rendering(sigmas, rgbs, z_vals.to(self.device))
