@@ -56,7 +56,7 @@
 
 - latent code 的操作是：优化提取输入图形的latent code  然后保存下来再赋值给模型渲染，便可利用输入图像的latent code
 
-  - 
+  - 猜想正确
 
   ​	
 
