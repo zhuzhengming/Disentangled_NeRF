@@ -1,18 +1,4 @@
-## 笔记八：sketch控制的NeRF模型
-
-- #### 思路一计划（sketch控制的NeRF模型）：
-
-  - 深入理解NeRF的代码细节
-  - 从最基本的codeNeRF上操作latent code
-  - 然后参考CLIPNeRF的方法，将sketch的建模加入操作geometry方面的latent code。
-  - 尝试对人体的建模
-  - 改进方法
-
-- #### 思路二计划（类似headNeRF的方法，加入SMPL）：
-
-  - 参考文献【1】【3】
-  - 搭建geometry和texture可控的NeRF
-  - 搭建HeadNeRF 并参考SMPL的代码
+## 笔记：可解耦控制的NeRF模型
 
 - #### NeRF代码细节：
 
@@ -50,34 +36,6 @@
 ## 对于已有训练出的模型：
 
 - camera pose的操作是设置azimuth、 elevation 和 distance来得到C2W转换矩阵来进行的。
-  - 实验验证猜想正确
-
 
 
 - latent code 的操作是：优化提取输入图形的latent code  然后保存下来再赋值给模型渲染，便可利用输入图像的latent code
-
-  - 猜想正确
-
-  ​	
-
-### 计划：
-
-- 先搞明白conditional NeRF
-  - 写一个控制视角的： 给定欧拉角和距离，得到转换矩阵
-  - 写一个改变latent codes 的： 提取已有的latent code作为输入来进行操作。
-- 再思考结合功能
-- 在提升速度，分辨率等效果
-
-### 困难：
-
-- 加入人体要学习新的知识
-
-- 找不到符合要求的数据集
-
-- 训练速度慢
-
-
-### 待办：
-
-- 写一个C2W的矩阵转换
-- 解偶、插值latent code来进行渲染
